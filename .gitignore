@@ -3,3 +3,5 @@ __pycache__
 venv
 *.pyc
 chunks
+.summary_cache
+docdog.egg-info
