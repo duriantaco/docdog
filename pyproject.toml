@@ -8,20 +8,21 @@ version = "0.0.1"
 description = "A tool for summarizing documents and code using AI"
 readme = "README.md"
 requires-python = ">=3.8"
-license = {text = "MIT"}
+license = {text = "Apache-2.0"} 
 authors = [
     {name = "oha", email = "aaronoh2015@gmail.com"}
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
 ]
 dependencies = [
     "openai>=1.0.0",
     "python-dotenv>=0.19.0",
     "pykomodo>=0.1.5",
-    "jinja2"
+    "jinja2",
+    "colorama>=0.4.6"
 ]
 
 [project.scripts]
