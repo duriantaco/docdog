@@ -1,0 +1,9 @@
+Please review the README you've just generated and validate it against these criteria:
+
+1. Does it include all required sections from the initial instructions?
+2. Is the information accurate based on the project files you analyzed? You must be confident in the content.
+3. Is it well-formatted and readable?
+4. Are there any sections that could be improved with the information available?
+
+If the README needs improvements, provide an improved version starting with 'Improved README:'.
+If the README is satisfactory, respond with 'README validation passed: [brief summary of what you included]'

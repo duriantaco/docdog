@@ -1,6 +1,7 @@
 import os
 import fnmatch
 import ast
+import json
 
 class MCPTools:
     def __init__(self, project_root: str):
@@ -58,12 +59,24 @@ class MCPTools:
             return content
         except Exception as e:
             return f"Error reading file: {str(e)}"
+        
+    def batch_read_files(self, file_paths: list) -> str:
+        results = []
+        for file_path in file_paths:
+            content = self.read_file(file_path)
+            if "Error" in content:
+                results.append({"file": file_path, "error": content})
+            else:
+                results.append({"file": file_path, "content": content})
+        return json.dumps(results, indent=2)
 
     def handle_tool_call(self, tool_name: str, tool_input: dict) -> str:
         if tool_name == "list_files":
             return self.list_files(tool_input["directory"])
         elif tool_name == "read_file":
             return self.read_file(tool_input["file_path"])
+        elif tool_name == "batch_read_files":
+            return self.batch_read_files(tool_input["file_paths"])
         else:
             return f"Unknown tool: {tool_name}"
 
@@ -85,5 +98,14 @@ tools = [
             "properties": {"file_path": {"type": "string", "description": "File path relative to repo root"}},
             "required": ["file_path"]
         }
+    },
+    {
+    "name": "batch_read_files",
+    "description": "Read multiple files’ contents within the repo.",
+    "input_schema": {
+        "type": "object",
+        "properties": {"file_paths": {"type": "array", "items": {"type": "string"}}},
+        "required": ["file_paths"]
     }
+  }
 ]

@@ -1,21 +1,20 @@
-<result>
-# DocDog - Automated Documentation Generation for Code Projects
+# DocDog
 
-![License](https://img.shields.io/github/license/yourusername/docdog)
-![Version](https://img.shields.io/github/v/release/yourusername/docdog)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-## Overview
+## Overview/Introduction
 
-DocDog is a powerful AI-based tool designed to streamline the process of generating documentation for code projects. It leverages the OpenAI API to analyze and summarize code, automatically creating comprehensive README files. This tool aims to enhance developer productivity by reducing the time and effort required for documentation, allowing teams to focus on coding while maintaining high-quality documentation.
+DocDog is a command-line tool that automates the generation of comprehensive documentation for software projects. It leverages AI models from Anthropic to analyze and summarize code, and generates a professional README file based on the generated summaries. The tool aims to streamline the documentation process and enhance developer productivity.
 
 ## Features
 
-- **Project Chunking**: DocDog can chunk a project's code files into manageable pieces, optimized for processing by large language models (LLMs).
-- **Code Summarization**: Utilizes OpenAI's GPT-3.5-turbo model to generate concise and informative summaries for code chunks, functions, and classes.
-- **README Generation**: Generates a professional README.md file based on the code summaries, project structure, and configuration files.
-- **Parallel Processing**: Supports parallel processing of code chunks for faster summarization, leveraging multiple CPU cores for improved performance.
-- **Caching**: Implements caching mechanisms to avoid redundant summarization of previously processed code, improving efficiency.
-- **Configurable**: Offers a range of configuration options to customize the behavior of the tool, such as the number of chunks, allowed file extensions, and model parameters.
+- Chunks project files into multiple text files for efficient processing
+- Summarizes code chunks using the Anthropic AI API
+- Generates a professional README file with various sections
+- Supports parallel processing for faster code summarization
+- Provides configuration options for customizing tool behavior
+- Utilizes caching to improve performance for repeated summarization tasks
+- Integrates with the PyKomodo library for efficient chunking (if available)
 
 ## Installation
 
@@ -23,78 +22,79 @@ DocDog is a powerful AI-based tool designed to streamline the process of generat
 pip install docdog
 ```
 
-Ensure you have the necessary dependencies installed, including `openai`, `python-dotenv`, and `pykomodo`.
+Make sure to have the required dependencies installed (`anthropic`, `python-dotenv`, `pykomodo`, `tiktoken`, and `jinja2`).
 
 ## Usage
 
-1. Navigate to your project's root directory.
-2. Run the `docdog` command with the desired options:
-
 ```
-docdog --output README.md
+docdog [-h] [-o OUTPUT] [-p PROMPT_TEMPLATE] [-m MODEL] [-k API_KEY] [--reasoning] [--max-iterations MAX_ITERATIONS]
 ```
 
-This will generate a `README.md` file in the current directory, containing the project's documentation based on the code summaries.
+- `-o`, `--output`: Specify the output file for the generated README (default: `README.md`)
+- `-p`, `--prompt-template`: Path to a custom prompt template file
+- `-m`, `--model`: Model to use for summarization (default: `gpt-4o-mini`)
+- `-k`, `--api-key`: API key for the selected model (if not set in the environment variable)
+- `--reasoning`: Generate a `reasoning.md` file explaining the AI's decisions
+- `--max-iterations`: Maximum number of iterations for analyzing project chunks (default: 15)
 
-For more advanced usage and configuration options, refer to the [documentation](link-to-documentation).
+To use DocDog, navigate to your project's root directory and run the `docdog` command. The tool will automatically chunk the project files, summarize the code chunks, and generate a README file based on the summaries and other project information.
 
 ## Configuration
 
-DocDog supports various configuration options to customize its behavior. You can create a `config.json` file in the project root directory with the following structure:
+DocDog can be configured via environment variables and a `config.json` file in the project root. The following options are available:
 
-```json
-{
-    "num_chunks": 5,
-    "model": "gpt-3.5-turbo",
-    "max_tokens": 5000,
-    "temperature": 0.7,
-    "verbose": false,
-    "allowed_extensions": [".txt", ".md", ".py", ".pdf", ".sh", ".json", "..."]
-}
-```
-
-- `num_chunks`: The number of chunks to split the project files into (default: 5).
-- `model`: The OpenAI model to use for code summarization (default: "gpt-3.5-turbo").
-- `max_tokens`: The maximum number of tokens for the summary (default: 5000).
-- `temperature`: The temperature parameter for the language model, controlling the randomness of the output (default: 0.7).
-- `verbose`: Enable verbose logging for debugging purposes (default: false).
-- `allowed_extensions`: A list of file extensions to include in the chunking process (default: common code and documentation file types).
+- `ANTHROPIC_API_KEY` (environment variable): Your API key for accessing the Anthropic models.
+- `num_chunks` (config.json): The number of chunks to split the project files into (default: 5).
+- `model` (config.json): The model to use for summarization (default: `gpt-4o-mini`).
+- `max_tokens` (config.json): The maximum number of tokens for the generated summaries (default: 5000).
+- `temperature` (config.json): The temperature value for the model (default: 0.7).
+- `verbose` (config.json): Whether to enable verbose logging (default: false).
+- `allowed_extensions` (config.json): An array of file extensions to include in the chunking process.
 
 ## Examples and Use Cases
 
-DocDog can be beneficial in various scenarios, including:
+Here's an example of how to use DocDog to generate a README for a Python project:
 
-- **Open-Source Projects**: Maintain up-to-date and comprehensive documentation for your open-source projects, making it easier for contributors to understand and collaborate.
-- **Internal Projects**: Streamline documentation within your organization, ensuring consistent and accurate information across different teams and projects.
-- **Personal Projects**: Automatically generate documentation for your personal projects, saving time and effort.
+```bash
+# Set the API key (Anthropic)
+export ANTHROPIC_API_KEY=your_api_key
+
+# Navigate to the project root
+cd /path/to/your/project
+
+# Run DocDog
+docdog
+```
+
+This will generate a `README.md` file in the project root directory, containing sections like Overview, Features, Installation, Usage, API Documentation, Configuration, Examples, Troubleshooting, Contributing, and License.
+
+You can also customize the output file name and specify a custom prompt template:
+
+```bash
+docdog -o my_project_readme.md -p custom_prompt.txt
+```
 
 ## Troubleshooting/FAQ
 
-**Q: How can I ensure the accuracy of the generated documentation?**
-A: While DocDog aims to provide accurate summaries, it's always recommended to review the generated documentation and make necessary adjustments based on your project's specifics.
+**Q: I'm getting an error about the API key.**
+A: Make sure you have set the `ANTHROPIC_API_KEY` environment variable with a valid API key. You can also pass the API key directly using the `-k` or `--api-key` option.
 
-**Q: Can I customize the structure and content of the generated README?**
-A: Yes, DocDog supports customization through templates and configuration files. You can modify the structure, add additional sections, or adjust the content based on your project's needs.
+**Q: The generated README is missing some sections or information.**
+A: DocDog generates the README based on the information available in the project files and configurations. If certain information is not found or cannot be inferred, the corresponding sections may be incomplete or missing.
 
-**Q: Does DocDog support multiple programming languages?**
-A: Yes, DocDog can process various programming languages by default, including Python, JavaScript, Java, and more. You can also extend the supported file types by modifying the `allowed_extensions` configuration option.
-
-For more troubleshooting tips and frequently asked questions, refer to the [documentation](link-to-documentation).
+**Q: Can I customize the README structure or sections?**
+A: Currently, DocDog uses a predefined structure for the README file. However, you can create a custom prompt template and provide it using the `-p` or `--prompt-template` option.
 
 ## Contributing
 
-Contributions to DocDog are welcome! If you encounter any issues, have suggestions for improvements, or would like to add new features, please open an issue or submit a pull request on the [GitHub repository](https://github.com/yourusername/docdog).
+Contributions to DocDog are welcome! If you find any issues or have suggestions for improvements, please open an issue or submit a pull request on the project's GitHub repository.
 
-When contributing, please ensure that your code adheres to the project's coding standards and includes appropriate tests.
+When contributing, please follow the established coding style and conventions.
 
 ## License
 
-DocDog is released under the [MIT License](link-to-license).
+DocDog is licensed under the [MIT License](https://opensource.org/licenses/MIT).
 
----
-
-*Generated by DocDog on 2023-05-28*
-</result>
-
+And yes this readme was created by AI.
 ---
 *Generated by DocDog on 2025-03-24*

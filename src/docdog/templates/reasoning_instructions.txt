@@ -1,0 +1,6 @@
+## DOCUMENTING REASONING:
+For each section of the README, include a brief explanation of:
+- Why you chose the information you did.
+- Which project files and code snippets influenced your decisions.
+You MUST include specific references and codes that led to your conclusions. This is crucial for transparency and understanding the AI's reasoning.
+After the README content, append your reasoning starting with 'Reasoning:'.
