@@ -1,8 +1,10 @@
 {
     "num_chunks": 5,
-    "model": "gpt-3.5-turbo",
-    "max_tokens": 150,
+    "model": "gpt-4o-mini",
+    "max_tokens": 5000,
     "temperature": 0.7,
     "verbose": false,
-    "allowed_extensions": [".txt", ".md", ".py", ".pdf"]
-}
+    "allowed_extensions": [".txt", ".md", ".py", ".pdf", ".sh", ".json", ".yaml", ".ipynb", ".js", ".tsx", ".ts", "jsx", ".html", ".css", ".csv", ".xml", ".yml", 
+    ".sql", ".java", ".php", ".rb", ".c", ".cpp", ".h", ".hpp", ".cs", ".go", ".rs", ".swift", ".kt", ".m", ".pl", ".r", ".lua", ".sh", ".bash", ".zsh", ".ps1",
+     ".psm1", ".psd1", ".ps1xml", ".pssc", ".psc1", ".pssc", ".pss1", ".pssm", ".pssc", ".pss"
+    ]}
