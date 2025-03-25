@@ -1,37 +1,45 @@
 # Reasoning Behind README Generation
 
-1. **Title and Badges**
-   - The project name "DocDog" was taken from the `pyproject.toml` file.
-   - The license badge was included based on the MIT license information found in `pyproject.toml`.
+**Title and Badges**:
+- The project name "DocDog" is taken from the `pyproject.toml` file.
+- The license badge is added based on the Apache 2.0 license found in the `License` file.
 
-2. **Overview/Introduction**
-   - The overview section was written based on the project's main purpose of generating documentation for software projects, as inferred from the code and the initial prompt.
+**Overview/Introduction**:
+- The overview section provides a concise explanation of what DocDog does, based on the project's core functionality of generating README documentation for software projects by analyzing the codebase.
+- The problem it solves (streamlining documentation process) and the motivation behind it (saving time and effort while ensuring accurate documentation) are inferred from the project's purpose.
 
-3. **Features**
-   - The features were derived from analyzing the various functionalities implemented in the codebase, such as chunking files, summarizing code, generating READMEs, supporting parallel processing, providing configuration options, and integrating with external libraries like PyKomodo.
+**Features**:
+- The features section lists the core features of DocDog, based on the functionality implemented in the `main.py`, `chunking.py`, and `mcp_tools.py` modules.
+- Details like code analysis, parallel processing, and template support are derived from the code and associated comments/docstrings.
 
-4. **Installation**
-   - The installation instructions were based on the project's dependencies listed in `pyproject.toml` and `src/docdog.egg-info/requires.txt`.
+**Installation**:
+- The installation instructions are based on the standard Python package installation process, assuming DocDog is a Python package.
 
-5. **Usage**
-   - The usage section was created based on the command-line arguments and options found in `src/docdog/main.py`.
+**Quick Start Guide**:
+- The quick start guide provides a simple command (`docdog`) to generate the README, as evident from the `main.py` module and the usage examples in the code.
 
-6. **Configuration**
-   - The configuration section covers the environment variables and configuration options mentioned in `src/docdog/main.py` and `config.json`.
+**Usage**:
+- The usage section includes the command-line arguments and options available for DocDog, as implemented in the `main.py` module and the argument parsing code.
 
-7. **Examples and Use Cases**
-   - The examples were derived from the usage patterns and code snippets found throughout the codebase, particularly in `src/docdog/main.py` and `src/docdog/summarizer.py`.
+**API Documentation**:
+- The API documentation section documents the core classes and functions in the project, such as `MCPTools`, `chunk_project`, and other utility modules like `sanitize_prompt`.
+- The documentation is based on the code structure, function signatures, and docstrings/comments found in the respective modules.
 
-8. **Troubleshooting/FAQ**
-   - The troubleshooting section addresses potential issues related to API keys and missing information, as inferred from the error handling and logging in the codebase.
+**Configuration**:
+- The configuration section explains the environment variables and command-line arguments that can be used to configure DocDog, based on the code in `main.py` and the available options.
 
-9. **Contributing**
-   - The contributing section provides general guidelines for contributors, as is common practice in open-source projects.
+**Examples and Use Cases**:
+- The examples and use cases section provides realistic code examples and common usage patterns for DocDog, based on the usage instructions and command-line arguments implemented in the codebase.
 
-10. **License**
-    - The license section specifies the MIT license based on the information found in `pyproject.toml`.
+**Troubleshooting/FAQ**:
+- The troubleshooting section addresses common issues that may arise during the usage of DocDog, such as missing API keys or incomplete documentation generation.
+- These issues are inferred from the code logic and potential error scenarios.
 
-In cases where information was unclear or missing, I made reasonable assumptions based on the available code and context. For example, I assumed that the project's primary purpose was to generate documentation, and that it was intended to be used as a command-line tool, based on the presence of a `main.py` file and the command-line argument parsing.
+**Contributing**:
+- The contributing section provides basic guidelines for contributors, as is common practice in open-source projects.
+
+**License**:
+- The license section specifies the Apache 2.0 license, as found in the `License` file in the project.
 
 ---
-*Generated by DocDog on 2025-03-24*
+*Generated by DocDog on 2025-03-25*
