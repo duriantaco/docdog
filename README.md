@@ -1,6 +1,9 @@
-# DocDog
+<p align="center">
+  <img src="assets/DOCDOG.png" alt="DOCDOG Logo" width="300">
+</p>
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-green.svg)](https://github.com/duriantaco/docdog/blob/main/License) [![Version](https://img.shields.io/badge/version-0.0.2-blue.svg)](https://github.com/duriantaco/docdog/releases)
+
 
 ## Overview
 
