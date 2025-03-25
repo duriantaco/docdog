@@ -2,20 +2,35 @@ import os
 import unittest
 import json
 import ast
-from unittest.mock import patch, mock_open, MagicMock
+import concurrent.futures
+from unittest.mock import patch, mock_open, MagicMock, call
 from docdog.mcp_tools import MCPTools
 
 class TestMCPTools(unittest.TestCase):
     def setUp(self):
         self.project_root = "/test/project/root"
-        self.tools = MCPTools(self.project_root)
+        # Update initialization to include new parameters
+        self.tools = MCPTools(self.project_root, max_workers=None, cache_size=128)
     
     def test_initialization(self):
-        """Test initialization of MCPTools"""
-        self.assertEqual(self.tools.project_root, self.project_root)
-        self.assertIn("**/.git/**", self.tools.ignore_patterns)
-        self.assertIn("**/*.jpg", self.tools.ignore_patterns)
+        """Test initialization of MCPTools with different parameters"""
+        # Test default initialization
+        tools = MCPTools(self.project_root)
+        self.assertEqual(tools.project_root, self.project_root)
+        self.assertIsNone(tools.max_workers)
+        self.assertEqual(tools.cache_size, 128)
+        
+        # Test with custom parameters
+        tools_custom = MCPTools(self.project_root, max_workers=4, cache_size=256)
+        self.assertEqual(tools_custom.project_root, self.project_root)
+        self.assertEqual(tools_custom.max_workers, 4)
+        self.assertEqual(tools_custom.cache_size, 256)
+        
+        # Check ignore patterns are correctly set
+        self.assertIn("**/.git/**", tools.ignore_patterns)
+        self.assertIn("**/*.jpg", tools.ignore_patterns)
     
+    # The should_ignore test remains the same
     def test_should_ignore(self):
         """Test pattern matching for files that should be ignored"""
         with patch('os.path.relpath') as mock_relpath:
@@ -54,6 +69,41 @@ class TestMCPTools(unittest.TestCase):
             self.assertNotIn(".git", result)
             self.assertNotIn("image.jpg", result)
     
+    @patch('os.path.exists')
+    @patch('os.path.isfile')
+    @patch('os.listdir')
+    @patch('os.path.relpath')
+    def test_list_files_caching(self, mock_relpath, mock_listdir, mock_isfile, mock_exists):
+        """Test that list_files uses caching"""
+        mock_exists.return_value = True
+        mock_listdir.return_value = ["main.py", "README.md", ".git", "image.jpg"]
+        mock_isfile.return_value = True
+        mock_relpath.side_effect = lambda path, root: os.path.basename(path)
+
+        with patch.object(self.tools, 'should_ignore', side_effect=lambda p: p.endswith(('.git', '.jpg'))):
+            # First call: should miss cache
+            result1 = self.tools.list_files("src")
+            self.assertEqual(mock_listdir.call_count, 1)
+            info1 = self.tools._cached_list_files.cache_info()
+            self.assertEqual(info1.misses, 1)
+            self.assertEqual(info1.hits, 0)
+
+            # Second call with same directory: should hit cache
+            result2 = self.tools.list_files("src")
+            self.assertEqual(mock_listdir.call_count, 1)  # No additional call
+            info2 = self.tools._cached_list_files.cache_info()
+            self.assertEqual(info2.misses, 1)
+            self.assertEqual(info2.hits, 1)
+            self.assertEqual(result1, result2)  # Results should be consistent
+
+            # Call with different directory: should miss cache again
+            result3 = self.tools.list_files("tests")
+            self.assertEqual(mock_listdir.call_count, 2)  # New call
+            info3 = self.tools._cached_list_files.cache_info()
+            self.assertEqual(info3.misses, 2)
+            self.assertEqual(info3.hits, 1)
+    
+    # Additional tests for path handling remain the same
     @patch('os.path.abspath')
     def test_list_files_outside_repo(self, mock_abspath):
         """Test handling of paths outside the project root"""
@@ -100,6 +150,34 @@ class TestMCPTools(unittest.TestCase):
             self.assertEqual(result, "Error: File ignored!")
     
     @patch('os.path.exists')
+    @patch('builtins.open', new_callable=mock_open, read_data="test content")
+    def test_read_file_caching(self, mock_file, mock_exists):
+        """Test that read_file uses caching"""
+        mock_exists.return_value = True
+        with patch.object(self.tools, 'should_ignore', return_value=False):
+            # First call: should miss cache
+            result1 = self.tools.read_file("test.txt")
+            self.assertEqual(mock_file.call_count, 1)
+            info1 = self.tools._cached_read_file.cache_info()
+            self.assertEqual(info1.misses, 1)
+            self.assertEqual(info1.hits, 0)
+
+            # Second call with same file: should hit cache
+            result2 = self.tools.read_file("test.txt")
+            self.assertEqual(mock_file.call_count, 1)  # No additional open
+            info2 = self.tools._cached_read_file.cache_info()
+            self.assertEqual(info2.misses, 1)
+            self.assertEqual(info2.hits, 1)
+            self.assertEqual(result1, result2)  # Results should be consistent
+
+            # Call with different file: should miss cache again
+            result3 = self.tools.read_file("other.txt")
+            self.assertEqual(mock_file.call_count, 2)  # New open
+            info3 = self.tools._cached_read_file.cache_info()
+            self.assertEqual(info3.misses, 2)
+            self.assertEqual(info3.hits, 1)
+    
+    @patch('os.path.exists')
     @patch('builtins.open')
     def test_read_file_error(self, mock_open, mock_exists):
         """Test error handling in read_file"""
@@ -143,6 +221,48 @@ class TestMCPTools(unittest.TestCase):
                 self.assertIn("Test docstring", result)
                 self.assertIn("Comments:", result)
                 self.assertIn("# Test comment", result)
+    
+    def test_clear_caches(self):
+        """Test clearing the LRU caches"""
+        with patch.object(self.tools._cached_read_file, 'cache_clear') as mock_read_clear:
+            with patch.object(self.tools._cached_list_files, 'cache_clear') as mock_list_clear:
+                self.tools.clear_caches()
+                mock_read_clear.assert_called_once()
+                mock_list_clear.assert_called_once()
+    
+    @patch('concurrent.futures.ThreadPoolExecutor')
+    def test_batch_read_files_threading(self, mock_executor_class):
+        """Test that batch_read_files uses ThreadPoolExecutor"""
+        mock_executor = MagicMock()
+        mock_executor_class.return_value.__enter__.return_value = mock_executor
+        
+        # Set up mock futures and their results
+        mock_future1 = MagicMock()
+        mock_future1.result.return_value = "content1"
+        
+        mock_future2 = MagicMock()
+        mock_future2.result.return_value = "content2"
+        
+        # Configure the executor to return our mock futures
+        mock_executor.submit.side_effect = [mock_future1, mock_future2]
+        # Configure as_completed to return futures in order
+        with patch('concurrent.futures.as_completed', return_value=[mock_future1, mock_future2]):
+            # Call the method with multiple files
+            result = self.tools.batch_read_files(["file1.txt", "file2.txt"])
+            
+            # Verify ThreadPoolExecutor was created with the right parameters
+            mock_executor_class.assert_called_once_with(max_workers=self.tools.max_workers)
+            
+            # Verify submit was called for each file
+            self.assertEqual(mock_executor.submit.call_count, 2)
+            
+            # Parse the result and check the content
+            parsed = json.loads(result)
+            self.assertEqual(len(parsed), 2)
+            self.assertEqual(parsed[0]["file"], "file1.txt")
+            self.assertEqual(parsed[0]["content"], "content1")
+            self.assertEqual(parsed[1]["file"], "file2.txt")
+            self.assertEqual(parsed[1]["content"], "content2")
     
     def test_batch_read_files(self):
         """Test batch reading multiple files"""
