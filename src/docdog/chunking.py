@@ -10,11 +10,11 @@ PYKOMODO_AVAILABLE = True
 def chunk_project(project_root, output_dir="chunks", config=None):
     if config is None:
         config = {
-            "max_tokens_per_chunk": 100000,  
+            "max_tokens_per_chunk": 80000,  
             "allowed_extensions": [".py", ".md", ".txt", ".json", ".toml"]
         }
     
-    max_tokens_per_chunk = config.get("max_tokens_per_chunk", 100000)
+    max_tokens_per_chunk = config.get("max_tokens_per_chunk", 80000)
     allowed_extensions = config.get("allowed_extensions", [".py", ".md", ".txt", ".json", ".toml"])
     
     if os.path.exists(output_dir):
@@ -27,6 +27,7 @@ def chunk_project(project_root, output_dir="chunks", config=None):
             "**/.git/**",
             "**/__pycache__/**",
             "**/venv/**",
+            "**/.venv/**",
             "**/node_modules/**",
             "**/.DS_Store",
             "**/*.jpg",
@@ -42,8 +43,15 @@ def chunk_project(project_root, output_dir="chunks", config=None):
             logger.info("Using TokenBasedChunker...")
             
             temp_dir = os.path.join(output_dir, "temp")
-            os.makedirs(temp_dir, exist_ok=True)
-            
+
+            try:
+                if not os.path.exists(output_dir):
+                    os.makedirs(output_dir, exist_ok=True)
+                os.makedirs(temp_dir, exist_ok=True)
+            except Exception as temp_dir_error:
+                logger.error(f"Error creating temp directory: {temp_dir_error}")
+                raise
+                        
             analyzer = TokenBasedChunker(
                 equal_chunks=1, 
                 output_dir=temp_dir,

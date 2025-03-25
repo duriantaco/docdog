@@ -1,100 +1,163 @@
-# DocDog
+# NLP App
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 ## Overview/Introduction
 
-DocDog is a command-line tool that automates the generation of comprehensive documentation for software projects. It leverages AI models from Anthropic to analyze and summarize code, and generates a professional README file based on the generated summaries. The tool aims to streamline the documentation process and enhance developer productivity.
+NLP App is a command-line tool for performing various natural language processing (NLP) tasks on text data. It provides a user-friendly interface for tokenization, part-of-speech tagging, named entity recognition, sentiment analysis, and topic modeling. The project aims to make NLP techniques accessible to users without extensive knowledge of the underlying algorithms.
 
 ## Features
 
-- Chunks project files into multiple text files for efficient processing
-- Summarizes code chunks using the Anthropic AI API
-- Generates a professional README file with various sections
-- Supports parallel processing for faster code summarization
-- Provides configuration options for customizing tool behavior
-- Utilizes caching to improve performance for repeated summarization tasks
-- Integrates with the PyKomodo library for efficient chunking (if available)
+- Text preprocessing (tokenization, stopword removal, stemming/lemmatization)
+- Part-of-speech (POS) tagging
+- Named entity recognition (NER)
+- Sentiment analysis
+- Topic modeling (LDA)
+- Command-line interface (CLI) for easy usage
+- Support for multiple input file formats (txt, csv, json)
+- Customizable configuration options
 
 ## Installation
 
+1. Clone the repository:
+
 ```bash
-pip install docdog
+git clone https://github.com/username/nlp-app.git
 ```
 
-Make sure to have the required dependencies installed (`anthropic`, `python-dotenv`, `pykomodo`, `tiktoken`, and `jinja2`).
+2. Navigate to the project directory:
+
+```bash
+cd nlp-app
+```
+
+3. Install the required dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+## Quick Start Guide
+
+After installation, you can run the NLP App from the command line:
+
+```bash
+python nlp_app.py --input_file data/sample.txt --tasks pos ner
+```
+
+This command will perform part-of-speech tagging and named entity recognition on the `sample.txt` file located in the `data` directory.
 
 ## Usage
 
-```
-docdog [-h] [-o OUTPUT] [-p PROMPT_TEMPLATE] [-m MODEL] [-k API_KEY] [--reasoning] [--max-iterations MAX_ITERATIONS]
+The NLP App supports various tasks and options. You can view the available options by running:
+
+```bash
+python nlp_app.py --help
 ```
 
-- `-o`, `--output`: Specify the output file for the generated README (default: `README.md`)
-- `-p`, `--prompt-template`: Path to a custom prompt template file
-- `-m`, `--model`: Model to use for summarization (default: `gpt-4o-mini`)
-- `-k`, `--api-key`: API key for the selected model (if not set in the environment variable)
-- `--reasoning`: Generate a `reasoning.md` file explaining the AI's decisions
-- `--max-iterations`: Maximum number of iterations for analyzing project chunks (default: 15)
+### Examples
 
-To use DocDog, navigate to your project's root directory and run the `docdog` command. The tool will automatically chunk the project files, summarize the code chunks, and generate a README file based on the summaries and other project information.
+- Perform sentiment analysis on a JSON file:
+
+```bash
+python nlp_app.py --input_file data/reviews.json --tasks sentiment
+```
+
+- Perform topic modeling (LDA) on a CSV file:
+
+```bash
+python nlp_app.py --input_file data/articles.csv --tasks lda --num_topics 10
+```
+
+- Preprocess text and save the output to a file:
+
+```bash
+python nlp_app.py --input_file data/corpus.txt --tasks preprocess --output_file preprocessed.txt
+```
+
+## API Documentation
+
+The NLP App provides a Python API for integrating NLP functionality into your projects. The main classes and functions are:
+
+- `TextPreprocessor`: Handles text preprocessing tasks (tokenization, stopword removal, stemming/lemmatization).
+- `POSTagger`: Performs part-of-speech tagging on tokenized text.
+- `NERTagger`: Identifies named entities in text using pre-trained models.
+- `SentimentAnalyzer`: Analyzes the sentiment of text data (positive, negative, or neutral).
+- `TopicModeler`: Discovers topics and their distributions in a corpus of documents using Latent Dirichlet Allocation (LDA).
+
+For detailed usage and examples, refer to the [API documentation](https://github.com/username/nlp-app/blob/main/docs/api.md).
 
 ## Configuration
 
-DocDog can be configured via environment variables and a `config.json` file in the project root. The following options are available:
+The NLP App can be configured using a JSON file or environment variables. The following options are available:
 
-- `ANTHROPIC_API_KEY` (environment variable): Your API key for accessing the Anthropic models.
-- `num_chunks` (config.json): The number of chunks to split the project files into (default: 5).
-- `model` (config.json): The model to use for summarization (default: `gpt-4o-mini`).
-- `max_tokens` (config.json): The maximum number of tokens for the generated summaries (default: 5000).
-- `temperature` (config.json): The temperature value for the model (default: 0.7).
-- `verbose` (config.json): Whether to enable verbose logging (default: false).
-- `allowed_extensions` (config.json): An array of file extensions to include in the chunking process.
+- `preprocessing.stopwords`: Path to a custom stopwords file (default: `None`, uses built-in stopwords).
+- `preprocessing.stemmer`: Stemming algorithm to use (`porter`, `snowball`, or `None` for no stemming).
+- `ner.model`: Pre-trained NER model to use (default: `en_core_web_sm`).
+- `sentiment.model`: Pre-trained sentiment analysis model to use (default: `distilbert-base-uncased-finetuned-sst-2-english`).
+- `lda.num_topics`: Number of topics for LDA topic modeling (default: `10`).
+
+You can create a `config.json` file in the project root directory or set the corresponding environment variables (e.g., `NLP_APP_PREPROCESSING_STOPWORDS`).
 
 ## Examples and Use Cases
 
-Here's an example of how to use DocDog to generate a README for a Python project:
+The NLP App can be used in various scenarios, such as:
 
-```bash
-# Set the API key (Anthropic)
-export ANTHROPIC_API_KEY=your_api_key
+- **Text analysis**: Analyze large text corpora (e.g., customer reviews, social media posts, news articles) to extract insights and understand trends.
+- **Content categorization**: Categorize documents based on topics or sentiment for better organization and retrieval.
+- **Text preprocessing**: Preprocess text data for downstream NLP tasks, such as machine translation or text generation.
+- **Named entity recognition**: Identify and extract named entities (e.g., people, organizations, locations) from text for information extraction and data mining.
 
-# Navigate to the project root
-cd /path/to/your/project
+Here's an example of using the NLP App for sentiment analysis on customer reviews:
 
-# Run DocDog
-docdog
-```
+```python
+from nlp_app.sentiment import SentimentAnalyzer
 
-This will generate a `README.md` file in the project root directory, containing sections like Overview, Features, Installation, Usage, API Documentation, Configuration, Examples, Troubleshooting, Contributing, and License.
+# Load customer reviews from a file
+with open('data/reviews.txt', 'r') as f:
+    reviews = f.readlines()
 
-You can also customize the output file name and specify a custom prompt template:
+# Initialize the SentimentAnalyzer
+analyzer = SentimentAnalyzer()
 
-```bash
-docdog -o my_project_readme.md -p custom_prompt.txt
+# Analyze sentiment for each review
+for review in reviews:
+    sentiment, score = analyzer.analyze(review)
+    print(f"Review: {review.strip()}")
+    print(f"Sentiment: {sentiment} (Score: {score:.2f})")
+    print()
 ```
 
 ## Troubleshooting/FAQ
 
-**Q: I'm getting an error about the API key.**
-A: Make sure you have set the `ANTHROPIC_API_KEY` environment variable with a valid API key. You can also pass the API key directly using the `-k` or `--api-key` option.
+**Q: I'm getting an error during installation related to missing dependencies.**
+A: Make sure you have the required system packages installed. On Ubuntu/Debian, you can install them with `sudo apt-get install build-essential python3-dev`.
 
-**Q: The generated README is missing some sections or information.**
-A: DocDog generates the README based on the information available in the project files and configurations. If certain information is not found or cannot be inferred, the corresponding sections may be incomplete or missing.
+**Q: How can I use a custom trained model for named entity recognition?**
+A: You can load a custom spaCy model by setting the `ner.model` configuration option to the path of your model.
 
-**Q: Can I customize the README structure or sections?**
-A: Currently, DocDog uses a predefined structure for the README file. However, you can create a custom prompt template and provide it using the `-p` or `--prompt-template` option.
+**Q: How do I handle large text files that don't fit in memory?**
+A: The NLP App supports processing text files in chunks using the `--chunk_size` option. This will read and process the input file in smaller chunks to prevent memory issues.
 
 ## Contributing
 
-Contributions to DocDog are welcome! If you find any issues or have suggestions for improvements, please open an issue or submit a pull request on the project's GitHub repository.
+Contributions to the NLP App are welcome! If you encounter any issues or have suggestions for improvements, please open an issue on the [GitHub repository](https://github.com/username/nlp-app/issues).
 
-When contributing, please follow the established coding style and conventions.
+To contribute code changes:
+
+1. Fork the repository.
+2. Create a new branch for your feature or bugfix.
+3. Commit your changes and push the branch to your fork.
+4. Open a pull request against the main repository.
+
+Please ensure that your code follows the project's coding style and includes appropriate tests.
 
 ## License
 
-DocDog is licensed under the [MIT License](https://opensource.org/licenses/MIT).
+This project is licensed under the [Apache License 2.0](https://opensource.org/licenses/Apache-2.0).
 
-And yes this readme was created by AI.
+## Author (this is not ai generated)
+oha 
+
 ---
-*Generated by DocDog on 2025-03-24*
+*Generated by DocDog on 2025-03-25*

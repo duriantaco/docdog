@@ -5,3 +5,5 @@ venv
 chunks
 .summary_cache
 docdog.egg-info
+.pytest_cache
+.venv

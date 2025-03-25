@@ -12,11 +12,18 @@ def sanitize_prompt(prompt: str) -> str:
         str: The sanitized prompt.
     """
     prompt = unicodedata.normalize('NFKC', prompt)
-    prompt = re.sub(r'[\x00-\x1F\x7F-\x9F]', '', prompt)
+    prompt = re.sub(r'[\x00-\x08\x0B-\x1F\x7F-\x9F]', '', prompt)
+    prompt = re.sub(r'[\u2028\u2029\u0085\u000C\u000D]', '', prompt)
     
-    # L (letters), N (numbers), P (punctuation), S (symbols), Z (separators)
-    allowed_categories = {'L', 'N', 'P', 'S', 'Z'}
-    prompt = ''.join(c for c in prompt if unicodedata.category(c)[0] in allowed_categories)
+    allowed_categories = {'Lu', 'Ll', 'Lt', 'Lm', 'Lo', 'Nd', 'Nl', 'No', 
+                         'Pc', 'Pd', 'Ps', 'Pe', 'Pi', 'Pf', 'Po', 
+                         'Sm', 'Sc', 'Sk', 'So', 'Zs'}
+    
+    filtered_chars = []
+    for c in prompt:
+        if c in {'\n', '\t', ' '} or unicodedata.category(c) in allowed_categories:
+            filtered_chars.append(c)
+    prompt = ''.join(filtered_chars)
     
     lines = prompt.split('\n')
     sanitized_lines = []
@@ -25,10 +32,12 @@ def sanitize_prompt(prompt: str) -> str:
         r"forget everything",
         r"execute the following",
     ]
+
     for line in lines:
         if any(re.search(pattern, line.lower()) for pattern in suspicious_patterns):
-            continue 
+            continue
         sanitized_lines.append(line)
+    
     prompt = '\n'.join(sanitized_lines)
     
     return prompt

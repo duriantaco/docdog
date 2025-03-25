@@ -14,30 +14,40 @@ class MCPTools:
 
     def should_ignore(self, path: str) -> bool:
         rel_path = os.path.relpath(path, self.project_root)
-        return any(fnmatch.fnmatch(rel_path, pattern) for pattern in self.ignore_patterns)
+        
+        if rel_path.startswith(".git") or "/.git/" in rel_path:
+            return True
+        if rel_path.startswith("__pycache__") or "/__pycache__/" in rel_path:
+            return True
+        if rel_path.startswith("venv") or "/venv/" in rel_path:
+            return True
+        if rel_path.startswith("node_modules") or "/node_modules/" in rel_path:
+            return True
+        
+        for ext in [".pyc", ".pyo", ".env", ".jpg", ".jpeg", ".png", ".gif", ".DS_Store"]:
+            if rel_path.endswith(ext):
+                return True
+        
+        for pattern in self.ignore_patterns:
+            if fnmatch.fnmatch(rel_path, pattern):
+                return True
+                
+        return False
 
     def list_files(self, directory: str) -> str:
-
-      
         full_dir = os.path.abspath(os.path.join(self.project_root, directory))
         if not full_dir.startswith(self.project_root):
             return "Error: Directory is outside the repo!"
         try:
-
-            print(f"DEBUG: list_files: project_root = {self.project_root}")
-            print(f"DEBUG: list_files: requested directory = {directory}")
-            print(f"DEBUG: list_files: full_dir = {full_dir}")
-            print(f"DEBUG: list_files: directory exists? {os.path.exists(full_dir)}")
             if os.path.exists(full_dir):
-                print(f"DEBUG: list_files: contents = {os.listdir(full_dir)}")
-        
-
-            files = []
-            for f in os.listdir(full_dir):
-                full_path = os.path.join(full_dir, f)
-                if os.path.isfile(full_path) and not self.should_ignore(full_path):
-                    files.append(os.path.relpath(full_path, self.project_root))
-            return "\n".join(files) if files else "No files found."
+                files = []
+                for f in os.listdir(full_dir):
+                    full_path = os.path.join(full_dir, f)
+                    if os.path.isfile(full_path) and not self.should_ignore(full_path):
+                        files.append(os.path.relpath(full_path, self.project_root))
+                return "\n".join(files) if files else "No files found."
+            else:
+                return "Directory does not exist."
         except Exception as e:
             return f"Error listing files: {str(e)}"
 
@@ -50,10 +60,14 @@ class MCPTools:
                 content = f.read()
             if file_path.endswith('.py'):
                 tree = ast.parse(content)
-                docstrings = [node.body[0].value.s for node in ast.walk(tree) 
-                            if isinstance(node, (ast.FunctionDef, ast.ClassDef)) 
-                            and node.body and isinstance(node.body[0], ast.Expr) 
-                            and isinstance(node.body[0].value, ast.Str)]
+                docstrings = []
+                
+                for node in ast.walk(tree):
+                    if isinstance(node, (ast.FunctionDef, ast.ClassDef)) and node.body:
+                        first_node = node.body[0]
+                        if isinstance(first_node, ast.Expr) and hasattr(first_node.value, 's'):
+                            docstrings.append(first_node.value.s)
+                
                 comments = [line.strip() for line in content.split('\n') if line.strip().startswith('#')]
                 return f"Content:\n{content}\n\nDocstrings:\n{docstrings}\n\nComments:\n{comments}"
             return content
@@ -92,7 +106,7 @@ tools = [
     },
     {
         "name": "read_file",
-        "description": "Read a file’s content within the current repo.",
+        "description": "Read a file's content within the current repo.",
         "input_schema": {
             "type": "object",
             "properties": {"file_path": {"type": "string", "description": "File path relative to repo root"}},
@@ -101,7 +115,7 @@ tools = [
     },
     {
     "name": "batch_read_files",
-    "description": "Read multiple files’ contents within the repo.",
+    "description": "Read multiple files' contents within the repo.",
     "input_schema": {
         "type": "object",
         "properties": {"file_paths": {"type": "array", "items": {"type": "string"}}},
