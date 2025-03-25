@@ -77,6 +77,10 @@ def main():
     parser.add_argument("--reasoning", action="store_true")
     parser.add_argument("-p", "--prompt-template")
     parser.add_argument("--max-iterations", type=int, default=15)
+    parser.add_argument("--workers", "-w", type=int, default=None, 
+                        help="Number of worker threads (default: auto)")
+    parser.add_argument("--cache-size", type=int, default=128, 
+                    help="Size of the LRU cache (default: 128)")
     args = parser.parse_args()
 
     project_root = find_project_root()
@@ -103,7 +107,7 @@ def main():
     seconds = total_estimated_time % 60
     logger.info(f"Estimated time for summarization: approximately {minutes} minutes and {seconds} seconds")
 
-    mcp_tools = MCPTools(project_root)
+    mcp_tools = MCPTools(project_root=project_root, max_workers=args.workers, cache_size=args.cache_size)
 
     script_dir = os.path.dirname(os.path.abspath(__file__))
     templates_dir = os.path.join(script_dir, "templates")

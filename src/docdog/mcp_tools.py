@@ -2,15 +2,23 @@ import os
 import fnmatch
 import ast
 import json
+import concurrent.futures
+from typing import Optional
+from functools import lru_cache
 
 class MCPTools:
-    def __init__(self, project_root: str):
+    def __init__(self, project_root: str, max_workers: Optional[int] = None, cache_size: int = 128):
         self.project_root = os.path.abspath(project_root)
+        self.max_workers = max_workers 
+        self.cache_size = cache_size 
         self.ignore_patterns = [
             "**/.git/**", "**/__pycache__/**", "**/venv/**", "**/node_modules/**",
             "**/*.pyc", "**/*.pyo", "**/.env", "**/*.env", "**/.DS_Store",
             "**/*.jpg", "**/*.jpeg", "**/*.png", "**/*.gif"
         ]
+        self._cached_read_file = lru_cache(maxsize=self.cache_size)(self._read_file_impl)
+        self._cached_list_files = lru_cache(maxsize=self.cache_size)(self._list_files_impl)
+
 
     def should_ignore(self, path: str) -> bool:
         rel_path = os.path.relpath(path, self.project_root)
@@ -35,6 +43,11 @@ class MCPTools:
         return False
 
     def list_files(self, directory: str) -> str:
+        """List files with LRU caching."""
+        return self._cached_list_files(directory)
+        
+    def _list_files_impl(self, directory: str) -> str:
+        """Implementation of list_files that will be cached."""
         full_dir = os.path.abspath(os.path.join(self.project_root, directory))
         if not full_dir.startswith(self.project_root):
             return "Error: Directory is outside the repo!"
@@ -52,6 +65,11 @@ class MCPTools:
             return f"Error listing files: {str(e)}"
 
     def read_file(self, file_path: str) -> str:
+        """Read file with LRU caching."""
+        return self._cached_read_file(file_path)
+        
+    def _read_file_impl(self, file_path: str) -> str:
+        """Implementation of read_file that will be cached."""
         full_path = os.path.join(self.project_root, file_path)
         if self.should_ignore(full_path):
             return "Error: File ignored!"
@@ -76,13 +94,23 @@ class MCPTools:
         
     def batch_read_files(self, file_paths: list) -> str:
         results = []
-        for file_path in file_paths:
-            content = self.read_file(file_path)
-            if "Error" in content:
-                results.append({"file": file_path, "error": content})
-            else:
-                results.append({"file": file_path, "content": content})
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+            futures = [executor.submit(self.read_file, file_path) for file_path in file_paths]
+            for future, file_path in zip(futures, file_paths):
+                try:
+                    content = future.result()
+                    if "Error" in content:
+                        results.append({"file": file_path, "error": content})
+                    else:
+                        results.append({"file": file_path, "content": content})
+                except Exception as exc:
+                    results.append({"file": file_path, "error": f"Exception: {str(exc)}"})
         return json.dumps(results, indent=2)
+
+    def clear_caches(self):
+        """Clear all LRU caches."""
+        self._cached_read_file.cache_clear()
+        self._cached_list_files.cache_clear()
 
     def handle_tool_call(self, tool_name: str, tool_input: dict) -> str:
         if tool_name == "list_files":
