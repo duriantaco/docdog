@@ -2,6 +2,14 @@
 
 All notable changes to DocDog will be documented in this file.
 
+## [0.0.2] - 2025-03-25
+
+### Added
+- Added lru cache and multi-threading
+
+### Fixed
+- Removed openai api
+
 ## [0.0.1] - 2025-03-25
 
 ### Added
