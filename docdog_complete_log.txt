@@ -1,46 +1,8 @@
-2025-03-25 16:11:28,541 [INFO] Project root: /Users/oha/docdog
-2025-03-25 16:11:28,541 [INFO] Chunking project files...
-2025-03-25 16:11:28,541 [INFO] Using TokenBasedChunker...
-2025-03-25 16:11:28,692 [INFO] Estimated 26625 total tokens across all files
-2025-03-25 16:11:28,692 [INFO] Creating 1 chunks with approximately 80000 tokens each
-2025-03-25 16:11:28,722 [INFO] Created 1 chunk files
-2025-03-25 16:11:28,723 [INFO] Created 1 chunk files in ./chunks directory
-2025-03-25 16:11:30,125 [INFO] Estimated time for summarization: approximately 0 minutes and 5 seconds
-2025-03-25 16:11:30,128 [INFO] ===== PHASE 1: Project Analysis =====
-2025-03-25 16:11:30,128 [INFO] Found 1 chunk files to analyze
-2025-03-25 16:11:30,128 [INFO] Analysis iteration 1/15
-2025-03-25 16:11:31,886 [INFO] HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
-2025-03-25 16:11:31,900 [INFO] Claude requested tool: list_files with input: {'directory': './chunks'}
-2025-03-25 16:11:31,903 [INFO] Tool list_files returned: chunks/chunk-0.txt
-2025-03-25 16:11:31,903 [INFO] Analysis iteration 2/15
-2025-03-25 16:11:33,458 [INFO] HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
-2025-03-25 16:11:33,461 [INFO] Claude requested tool: batch_read_files with input: {'file_paths': "['./chunks/chunk-0.txt']"}
-2025-03-25 16:11:33,467 [INFO] Tool batch_read_files returned: [
-  {
-    "file": "[",
-    "error": "Error reading file: [Errno 2] No such file or directory: '/User...
-2025-03-25 16:11:33,467 [INFO] Analysis iteration 3/15
-2025-03-25 16:11:36,387 [INFO] HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
-2025-03-25 16:11:36,390 [INFO] Analyzed chunk: chunk-0.txt (1/1)
-2025-03-25 16:11:36,391 [INFO] Claude requested tool: read_file with input: {'file_path': './chunks/chunk-0.txt'}
-2025-03-25 16:11:36,391 [INFO] Tool read_file returned: ================================================================================
-CHUNK 1 OF 1
-======...
-2025-03-25 16:11:36,392 [INFO] Successfully analyzed all 1 chunks
-2025-03-25 16:11:36,392 [INFO] ===== PHASE 2: README Generation =====
-2025-03-25 16:11:36,392 [INFO] Requesting README generation from Claude
-2025-03-25 16:12:36,626 [INFO] HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
-2025-03-25 16:12:36,648 [INFO] README content successfully generated
-2025-03-25 16:12:36,648 [INFO] ===== PHASE 3: README Validation =====
-2025-03-25 16:12:36,649 [INFO] Requesting README validation from Claude
-2025-03-25 16:13:38,746 [INFO] HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
-2025-03-25 16:13:38,753 [INFO] README improvements suggested - using improved version
-2025-03-25 16:13:38,756 [INFO] README written to README.md
-2025-03-25 16:13:38,757 [INFO] Reasoning written to reasoning.md
-2025-03-25 16:13:38,758 [INFO] Deleted chunk files in /Users/oha/docdog/chunks
-2025-03-25 16:13:38,758 [INFO] ===== DocDog Execution Summary =====
-2025-03-25 16:13:38,759 [INFO] Chunks analyzed: 1/1
-2025-03-25 16:13:38,759 [INFO] Analysis iterations used: 3/15
-2025-03-25 16:13:38,759 [INFO] README file written to: README.md
-2025-03-25 16:13:38,759 [INFO] Reasoning file written to: reasoning.md
-2025-03-25 16:13:38,759 [INFO] DocDog execution completed
+2025-03-26 14:41:48,701 [INFO] Project root: /Users/oha/docdog
+2025-03-26 14:41:48,701 [INFO] Chunking project files...
+2025-03-26 14:41:48,709 [INFO] Using TokenBasedChunker...
+2025-03-26 14:41:48,869 [INFO] Estimated 28512 total tokens across all files
+2025-03-26 14:41:48,869 [INFO] Creating 1 chunks with approximately 80000 tokens each
+2025-03-26 14:41:48,951 [INFO] Created 1 chunk files
+2025-03-26 14:41:48,951 [INFO] Created 1 chunk files in ./chunks directory
+2025-03-26 14:41:51,045 [INFO] User chose not to proceed.

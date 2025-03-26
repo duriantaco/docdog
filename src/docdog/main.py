@@ -35,7 +35,8 @@ client = anthropic.Anthropic(api_key=api_key)
 
 def find_project_root():
     markers = ['.git', 'pyproject.toml', 'setup.py', 'requirements.txt', 'package.json']
-    current_dir = os.path.dirname(os.path.abspath(__file__))
+    ## fixed bug here. using wrong dir
+    current_dir = os.getcwd()  
     prev_dir = None
     while current_dir != prev_dir:
         for marker in markers:
@@ -43,7 +44,10 @@ def find_project_root():
                 return current_dir
         prev_dir = current_dir
         current_dir = os.path.dirname(current_dir)
-    return os.path.dirname(os.path.abspath(__file__))
+    
+    logger.error("No project markers found. Please run DocDog from a valid project directory.")
+    logger.error(f"DocDog looks for these markers: {', '.join(markers)}")
+    sys.exit(1)
 
 def get_user_confirmation(timeout=10):
     """Ask user to confirm chunking and proceed with a timeout."""
