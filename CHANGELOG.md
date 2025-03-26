@@ -2,6 +2,11 @@
 
 All notable changes to DocDog will be documented in this file.
 
+## [0.0.3] - 2025-03-26
+### Fixed
+-Fixed bug in `main.py` with relation to `find_project_root` function. Looking in the wrong dir to generate the reports. 
+-Modified `test_find_project_root`
+
 ## [0.0.2] - 2025-03-25
 
 ### Added

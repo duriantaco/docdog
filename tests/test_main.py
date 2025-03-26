@@ -1,8 +1,7 @@
 import os
 import sys
 import unittest
-import time
-from unittest.mock import patch, MagicMock, mock_open, call
+from unittest.mock import patch, MagicMock
 from io import StringIO
 
 import docdog.main
