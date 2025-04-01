@@ -1,69 +1,55 @@
-<p align="center">
-  <img src="assets/DOCDOG.png" alt="DOCDOG Logo" width="300">
-</p>
+# DocDog
 
-[![License](https://img.shields.io/badge/license-Apache%202.0-green.svg)](https://github.com/duriantaco/docdog/blob/main/License) [![Version](https://img.shields.io/badge/version-0.0.2-blue.svg)](https://github.com/duriantaco/docdog/releases)
-
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 ## Overview
 
-DocDog is an AI-powered tool that automatically generates comprehensive README documentation for software projects. By analyzing the project's source code, configuration files, and existing documentation, DocDog can create a well-structured README file covering installation, usage, API documentation, examples, and more.
+DocDog is an AI-powered tool that streamlines the documentation process for software projects by automatically generating high-quality README files. It analyzes the project's codebase, including source code, documentation, and configuration files, to extract relevant information and generate a comprehensive README tailored to the project's specifics.
 
-The tool aims to streamline the documentation process for developers, saving time and effort while ensuring accurate and up-to-date documentation that reflects the project's current state. With DocDog, you can focus on writing code while keeping your project's documentation in sync.
+DocDog aims to save developers time and effort by automating the tedious task of writing documentation, while ensuring accuracy and completeness by directly referencing the codebase. It provides a convenient solution for keeping documentation up-to-date as the project evolves.
 
 ## Features
 
-- **Automatic README Generation**: DocDog analyzes your project's codebase, configuration files, and existing documentation to generate a comprehensive README file.
-- **Structured Documentation**: The generated README follows a standardized structure, including sections for installation, usage, API documentation, examples, troubleshooting, and more.
-- **Code Analysis**: DocDog examines your code to extract relevant information, such as function signatures, docstrings, and code comments, to include in the documentation.
-- **Configuration Options**: Customize the documentation generation process by specifying configuration options, such as allowed file extensions, output directory, and more.
-- **Parallel Processing**: Leverage parallel processing for efficient chunking and analysis of large codebases.
-- **Template Support**: Use built-in or custom templates to control the structure and formatting of the generated README.
-- **Reasoning Documentation**: Optionally include the reasoning behind the generated content in a separate file (`reasoning.md`) for transparency and understanding the AI's decision-making process.
+- **Code Analysis**: Thoroughly examines the project's codebase, including source code files, documentation, and configuration files.
+- **Parallel Processing**: Utilizes parallel processing techniques to efficiently handle large codebases.
+- **Template Support**: Allows the use of custom templates for README generation, ensuring consistency with project branding and style guidelines.
+- **Automatic README Generation**: Generates a complete README file with sections for overview, installation, usage, API documentation, configuration, examples, troubleshooting, contributing guidelines, and license information.
+- **Reasoning Documentation**: Provides transparency by documenting the reasoning behind the generated content, referencing specific code snippets and files that influenced the decisions.
 
 ## Installation
 
 ```bash
-# Clone the repository
-git clone https://github.com/duriantaco/docdog.git
-cd docdog
-
-# Create and activate a virtual environment
-python3 -m venv venv
-source venv/bin/activate
-
-# Install DocDog
-pip install .
+pip install docdog
 ```
 
 ## Quick Start Guide
 
-To generate a README for your project, navigate to your project's root directory and run:
+To generate a README for your project, simply run:
 
-```bash
+```
 docdog
 ```
 
-This will analyze your project's files and generate a `README.md` file in the current directory.
+This command will analyze your project's codebase and generate a comprehensive README file named `README.md` in the current directory.
 
 ## Usage
 
 ```
 usage: docdog [-h] [-o OUTPUT] [-m MODEL] [--reasoning] [-p PROMPT_TEMPLATE] [--max-iterations MAX_ITERATIONS] [--workers WORKERS] [--cache-size CACHE_SIZE]
 
-DocDog - AI Document & Code Summarizer
+AI-powered README generator for software projects
 
 optional arguments:
   -h, --help            show this help message and exit
   -o OUTPUT, --output OUTPUT
-                        Output file path for the generated README (default: README.md)
+                        Output file for the generated README (default: README.md)
   -m MODEL, --model MODEL
-                        AI model to use for documentation generation (default: gpt-4o-mini)
+                        Name of the AI model to use for generation (default: claude-v1)
   --reasoning           Include reasoning behind the generated content
   -p PROMPT_TEMPLATE, --prompt-template PROMPT_TEMPLATE
                         Path to a custom prompt template file
   --max-iterations MAX_ITERATIONS
-                        Maximum number of iterations for the AI model (default: 15)
+                        Maximum number of iterations for analysis (default: 15)
   --workers WORKERS, -w WORKERS
                         Number of worker threads (default: auto)
   --cache-size CACHE_SIZE
@@ -72,106 +58,59 @@ optional arguments:
 
 ## API Documentation
 
-### MCPTools
+### `docdog.tools.Tools`
 
-The `MCPTools` class provides a set of tools for interacting with the project's codebase, such as listing files, reading file contents, and batch reading multiple files. The class supports caching for improved performance and parallel processing for batch operations.
+The `Tools` class provides utility methods for interacting with the project's files and directories.
 
-#### `__init__(project_root, max_workers=None, cache_size=128)`
+- `list_files(directory: str) -> str`: List files in a given directory within the project.
+- `read_file(file_path: str) -> str`: Read the content of a file within the project.
+- `batch_read_files(file_paths: list) -> str`: Read the contents of multiple files within the project.
 
-Initializes the `MCPTools` instance.
+### `docdog.chunking.chunk_project`
 
-- `project_root` (str): The root directory of the project.
-- `max_workers` (int, optional): The maximum number of worker threads for parallel processing. If `None`, the number of workers is determined automatically.
-- `cache_size` (int, optional): The size of the LRU cache for caching file reads and listings. Default is 128.
+The `chunk_project` function is responsible for splitting the project's files into smaller chunks for efficient processing.
 
-#### `list_files(directory)`
-
-Lists files in the specified directory within the project root, excluding ignored patterns.
-
-- `directory` (str): The directory path relative to the project root.
-- Returns: A string containing the list of files, with one file path per line.
-
-#### `read_file(file_path)`
-
-Reads the content of a file within the project root.
-
-- `file_path` (str): The file path relative to the project root.
-- Returns: A string containing the file content. For Python files, it includes the content, docstrings, and comments.
-
-#### `batch_read_files(file_paths)`
-
-Reads the contents of multiple files within the project root in parallel.
-
-- `file_paths` (list): A list of file paths relative to the project root.
-- Returns: A JSON string containing a list of dictionaries, where each dictionary represents a file with its content or error message.
-
-#### `handle_tool_call(tool_name, tool_input)`
-
-Handles tool calls from the AI assistant, dispatching to the appropriate tool based on the `tool_name`.
-
-- `tool_name` (str): The name of the tool to execute.
-- `tool_input` (dict): The input parameters for the tool.
-- Returns: The result of the tool execution.
-
-### Chunking
-
-The `chunking` module provides functionality for splitting the project's files into chunks for efficient processing by the AI assistant.
-
-#### `chunk_project(project_root, output_dir="chunks", config=None)`
-
-Chunks the project's files into smaller files, splitting them based on token count or in parallel.
+```python
+def chunk_project(project_root, output_dir="chunks", config=None) -> List[str]:
+    ...
+```
 
 - `project_root` (str): The root directory of the project.
-- `output_dir` (str, optional): The directory to store the chunked files. Default is "chunks".
-- `config` (dict, optional): A configuration dictionary containing chunking options. If `None`, default options are used.
-- Returns: A list of file paths for the created chunk files.
+- `output_dir` (str, optional): The directory to store the generated chunks (default: `"chunks"`).
+- `config` (dict, optional): A configuration dictionary specifying chunking options.
 
-### Other Modules
+Returns a list of file paths for the generated chunks.
 
-- `sanitize_prompt`: A utility function for sanitizing prompts to prevent Unicode obfuscation and prompt injection attacks.
-- `templates`: Contains template files for the initial prompt, validation prompt, and reasoning instructions.
+### `docdog.utils.sanitize_prompt`
+
+The `sanitize_prompt` function is a utility for sanitizing prompts to prevent Unicode obfuscation and prompt injection attacks.
+
+```python
+def sanitize_prompt(prompt: str) -> str:
+    ...
+```
+
+- `prompt` (str): The input prompt to sanitize.
+
+Returns the sanitized prompt as a string.
 
 ## Configuration
 
-DocDog can be configured using environment variables, command-line arguments, and a configuration file.
-
-### Environment Variables
-
-- `ANTHROPIC_API_KEY`: Your Anthropic API key. Required for DocDog to function.
+DocDog can be configured through command-line arguments and environment variables.
 
 ### Command-line Arguments
 
-- `--output`: Specify the output file path for the generated README (default: `README.md`).
-- `--model`: Set the AI model to use for documentation generation (default: `gpt-4o-mini`).
-- `--reasoning`: Include the reasoning behind the generated content in a separate file (`reasoning.md`).
-- `--prompt-template`: Path to a custom prompt template file.
-- `--max-iterations`: Set the maximum number of iterations for the AI model (default: 15).
-- `--workers`: Specify the number of worker threads for parallel processing (default: auto-detected).
-- `--cache-size`: Set the size of the LRU cache for caching file reads and listings (default: 128).
+- `--output`: Specify the output file for the generated README (default: `README.md`).
+- `--model`: Set the name of the AI model to use for generation (default: `claude-v1`).
+- `--reasoning`: Include reasoning behind the generated content in a separate file (`reasoning.md`).
+- `--prompt-template`: Provide a custom prompt template file for README generation.
+- `--max-iterations`: Set the maximum number of iterations for the analysis phase (default: `15`).
+- `--workers`: Specify the number of worker threads for parallel processing (default: automatically determined).
+- `--cache-size`: Set the size of the LRU cache used for caching file operations (default: `128`).
 
-### Configuration File
+### Environment Variables
 
-DocDog supports a configuration file (`config.json`) for additional settings. The default configuration is:
-
-```json
-{
-    "num_chunks": 5,
-    "model": "gpt-4o-mini",
-    "max_tokens": 5000,
-    "temperature": 0.7,
-    "verbose": false,
-    "allowed_extensions": [
-        ".txt", ".md", ".py", ".pdf", ".sh", ".json", ".yaml", ".ipynb",
-        ".js", ".tsx", ".ts", "jsx", ".html", ".css", ".csv", ".xml",
-        ".yml", ".sql", ".java", ".php", ".rb", ".c", ".cpp", ".h",
-        ".hpp", ".cs", ".go", ".rs", ".swift", ".kt", ".m", ".pl",
-        ".r", ".lua", ".sh", ".bash", ".zsh", ".ps1", ".psm1", ".psd1",
-        ".ps1xml", ".pssc", ".psc1", ".pssc", ".pss1", ".pssm", ".pssc", ".pss"
-    ]
-}
-```
-
-You can create a `config.json` file in your project's root directory to override these settings.
+- `ANTHROPIC_API_KEY`: Set your Anthropic API key for authentication.
 
 ## Examples and Use Cases
 
@@ -181,82 +120,52 @@ You can create a `config.json` file in your project's root directory to override
 docdog
 ```
 
-This will generate a `README.md` file in the current directory, analyzing all files in the project with the default configuration.
+This command will generate a `README.md` file in the current directory based on the project's codebase.
 
-### Specifying an Output File
+### Custom Output File
 
 ```bash
-docdog --output docs/PROJECT_README.md
+docdog --output project_readme.md
 ```
 
-This will generate the README file as `docs/PROJECT_README.md` instead of the default `README.md`.
+Generate the README and save it to `project_readme.md` instead of the default `README.md`.
 
-### Including Reasoning
+### Include Reasoning
 
 ```bash
 docdog --reasoning
 ```
 
-This will generate a `reasoning.md` file alongside the `README.md`, explaining the reasoning behind the generated content.
+In addition to the `README.md` file, this command will generate a `reasoning.md` file documenting the reasoning behind the generated content, referencing specific code snippets and files.
 
-### Using a Custom Prompt Template
+### Custom Prompt Template
 
 ```bash
-docdog --prompt-template custom_prompt.txt
+docdog --prompt-template custom_template.txt
 ```
 
-This will use the `custom_prompt.txt` file as the prompt template for the AI model, allowing you to customize the structure and content of the generated README.
-
-### Adjusting Configuration
-
-You can create a `config.json` file in your project's root directory to adjust settings like the number of chunks, AI model, temperature, and allowed file extensions.
-
-```json
-{
-    "num_chunks": 10,
-    "model": "gpt-4",
-    "max_tokens": 6000,
-    "temperature": 0.8,
-    "allowed_extensions": [".py", ".md", ".txt", ".js"]
-}
-```
-
-This configuration will create 10 chunks, use the `gpt-4` model with a temperature of 0.8, limit the token count to 6000, and only analyze Python, Markdown, text, and JavaScript files.
+Use a custom prompt template file (`custom_template.txt`) for README generation instead of the default template.
 
 ## Troubleshooting/FAQ
 
-### Error: `ANTHROPIC_API_KEY not found in environment variables`
+### Missing API Key
 
-Make sure you have set the `ANTHROPIC_API_KEY` environment variable with your valid Anthropic API key. You can set it temporarily in your shell session or add it to your shell configuration file (e.g., `.bashrc`, `.zshrc`).
+If you encounter an error related to a missing API key, ensure that you have set the `ANTHROPIC_API_KEY` environment variable with your valid Anthropic API key.
 
-```bash
-export ANTHROPIC_API_KEY=your_api_key_here
-```
+### Incomplete Documentation Generation
 
-### Incomplete or Missing Information
-
-If the generated README is missing important information or sections, it's likely due to the tool being unable to find relevant information in your project's files. Double-check that your source code and configuration files are up-to-date and well-documented (e.g., using docstrings, comments, and descriptive variable/function names).
-
-### Unsatisfactory README Quality
-
-If the generated README quality is not satisfactory, you can try the following:
-
-- Increase the `max_iterations` option to allow the AI model more iterations for refining the output.
-- Use a more capable AI model (e.g., `gpt-4`) by setting the `--model` option.
-- Adjust the `temperature` setting in the `config.json` file to control the randomness and creativity of the generated text.
-- Provide a custom prompt template with more specific instructions tailored to your project.
+In some cases, DocDog may not be able to generate a complete README due to limitations in analyzing the codebase or encountering unsupported file types. If you encounter an incomplete README, check the log files for more information and consider running DocDog again with different configurations or providing additional context.
 
 ## Contributing
 
-Contributions are welcome! If you encounter any issues or have suggestions for improvements, please open an issue or submit a pull request on the [GitHub repository](https://github.com/duriantaco/docdog). See the [CONTRIBUTING.md](CONTRIBUTING.md) file for more details.
+Contributions to DocDog are welcome! Please refer to the [CONTRIBUTING.md](CONTRIBUTING.md) file for guidelines on how to contribute, including reporting issues, suggesting enhancements, and submitting pull requests.
 
 ## License
 
-DocDog is released under the [Apache 2.0 License](https://github.com/duriantaco/docdog/blob/main/License).
+DocDog is released under the [Apache 2.0 License](https://opensource.org/licenses/Apache-2.0).
 
 ---
-
-*Generated by DocDog on 2025-03-25*
+*Generated by DocDog on 2025-05-05*
 
 ---
-*Generated by DocDog on 2025-03-25*
+*Generated by DocDog on 2025-04-01*

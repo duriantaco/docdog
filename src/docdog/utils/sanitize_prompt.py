@@ -31,6 +31,10 @@ def sanitize_prompt(prompt: str) -> str:
         r"ignore all previous instructions",
         r"forget everything",
         r"execute the following",
+        r"run the following",
+        r"do not answer the following question",
+        r"do not respond to the following prompt",
+        r"do not answer the following"
     ]
 
     for line in lines:

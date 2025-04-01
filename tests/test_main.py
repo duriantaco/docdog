@@ -316,10 +316,10 @@ class TestMain(unittest.TestCase):
             analysis_response, readme_response, validation_response
         ]
         
-        mock_mcp_tools = MagicMock()
-        mock_mcp_tools.handle_tool_call.return_value = "Tool result"
+        mock_doc_tools = MagicMock()
+        mock_doc_tools.handle_tool_call.return_value = "Tool result"
         
-        with patch('docdog.main.MCPTools', return_value=mock_mcp_tools):
+        with patch('docdog.main.Tools', return_value=mock_doc_tools):
             with patch('sys.stdout', new=StringIO()):
                 with patch('sys.exit'):
                     docdog.main.main()
@@ -380,9 +380,9 @@ class TestMain(unittest.TestCase):
         
         mock_client.messages.create.side_effect = Exception("API Error")
         
-        mock_mcp_tools = MagicMock()
+        mock_doc_tools = MagicMock()
         
-        with patch('docdog.main.MCPTools', return_value=mock_mcp_tools):
+        with patch('docdog.main.Tools', return_value=mock_doc_tools):
             with patch('sys.stdout', new=StringIO()):
                 with patch('sys.exit'):
                     docdog.main.main()
@@ -450,10 +450,10 @@ class TestMain(unittest.TestCase):
         response.content = [readme_content]
         mock_client.messages.create.return_value = response
         
-        mock_mcp_tools = MagicMock()
+        mock_doc_tools = MagicMock()
         
         with patch('shutil.rmtree', side_effect=PermissionError("Permission denied")):
-            with patch('docdog.main.MCPTools', return_value=mock_mcp_tools):
+            with patch('docdog.main.Tools', return_value=mock_doc_tools):
                 with patch('sys.stdout', new=StringIO()):
                     with patch('sys.exit'):
                         docdog.main.main()
@@ -584,9 +584,9 @@ class TestReasoningFlag(unittest.TestCase):
             analysis_response, readme_response, validation_response
         ]
         
-        mock_mcp_tools = MagicMock()
+        mock_doc_tools = MagicMock()
         
-        with patch('docdog.main.MCPTools', return_value=mock_mcp_tools):
+        with patch('docdog.main.Tools', return_value=mock_doc_tools):
             with patch('sys.stdout', new=StringIO()):
                 with patch('sys.exit'):
                     docdog.main.main()
@@ -694,9 +694,9 @@ class TestCustomPromptTemplate(unittest.TestCase):
             analysis_response, readme_response, validation_response
         ]
         
-        mock_mcp_tools = MagicMock()
+        mock_doc_tools = MagicMock()
         
-        with patch('docdog.main.MCPTools', return_value=mock_mcp_tools):
+        with patch('docdog.main.Tools', return_value=mock_doc_tools):
             with patch('sys.stdout', new=StringIO()):
                 with patch('sys.exit'):
                     docdog.main.main()
@@ -812,9 +812,9 @@ class TestValidationPhase(unittest.TestCase):
                 analysis_response, readme_response, validation_response
             ]
             
-            mock_mcp_tools = MagicMock()
+            mock_doc_tools = MagicMock()
             
-            with patch('shutil.rmtree'), patch('docdog.main.MCPTools', return_value=mock_mcp_tools):
+            with patch('shutil.rmtree'), patch('docdog.main.Tools', return_value=mock_doc_tools):
                 with patch('sys.stdout', new=StringIO()):
                     with patch('sys.exit'):
                         docdog.main.main()
@@ -929,9 +929,9 @@ class TestEmptyReadmeHandling(unittest.TestCase):
                 analysis_response, readme_response, validation_response
             ]
             
-            mock_mcp_tools = MagicMock()
+            mock_doc_tools = MagicMock()
             
-            with patch('shutil.rmtree'), patch('docdog.main.MCPTools', return_value=mock_mcp_tools):
+            with patch('shutil.rmtree'), patch('docdog.main.Tools', return_value=mock_doc_tools):
                 with patch('sys.stdout', new=StringIO()):
                     with patch('sys.exit'):
                         docdog.main.main()
@@ -1050,10 +1050,10 @@ class TestBatchToolCalls(unittest.TestCase):
             analysis_response, analysis_response2, readme_response, validation_response
         ]
         
-        mock_mcp_tools = MagicMock()
-        mock_mcp_tools.handle_tool_call.return_value = "Tool result"
+        mock_doc_tools = MagicMock()
+        mock_doc_tools.handle_tool_call.return_value = "Tool result"
         
-        with patch('docdog.main.MCPTools', return_value=mock_mcp_tools):
+        with patch('docdog.main.Tools', return_value=mock_doc_tools):
             with patch('sys.stdout', new=StringIO()):
                 with patch('sys.exit'):
                     docdog.main.main()
@@ -1175,10 +1175,10 @@ class TestIncompleteAnalysis(unittest.TestCase):
             analysis_response, readme_response, validation_response
         ]
         
-        mock_mcp_tools = MagicMock()
-        mock_mcp_tools.handle_tool_call.return_value = "Tool result"
+        mock_doc_tools = MagicMock()
+        mock_doc_tools.handle_tool_call.return_value = "Tool result"
         
-        with patch('docdog.main.MCPTools', return_value=mock_mcp_tools):
+        with patch('docdog.main.Tools', return_value=mock_doc_tools):
             with patch('sys.stdout', new=StringIO()):
                 with patch('sys.exit'):
                     docdog.main.main()

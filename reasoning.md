@@ -9,7 +9,7 @@
 - The problem it solves (streamlining documentation process) and the motivation behind it (saving time and effort while ensuring accurate documentation) are inferred from the project's purpose.
 
 **Features**:
-- The features section lists the core features of DocDog, based on the functionality implemented in the `main.py`, `chunking.py`, and `mcp_tools.py` modules.
+- The features section lists the core features of DocDog, based on the functionality implemented in the `main.py`, `chunking.py`, and `doc_tools.py` modules.
 - Details like code analysis, parallel processing, and template support are derived from the code and associated comments/docstrings.
 
 **Installation**:
@@ -22,7 +22,7 @@
 - The usage section includes the command-line arguments and options available for DocDog, as implemented in the `main.py` module and the argument parsing code.
 
 **API Documentation**:
-- The API documentation section documents the core classes and functions in the project, such as `MCPTools`, `chunk_project`, and other utility modules like `sanitize_prompt`.
+- The API documentation section documents the core classes and functions in the project, such as `docTools`, `chunk_project`, and other utility modules like `sanitize_prompt`.
 - The documentation is based on the code structure, function signatures, and docstrings/comments found in the respective modules.
 
 **Configuration**:

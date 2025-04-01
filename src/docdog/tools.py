@@ -6,7 +6,7 @@ import concurrent.futures
 from typing import Optional
 from functools import lru_cache
 
-class MCPTools:
+class Tools:
     def __init__(self, project_root: str, max_workers: Optional[int] = None, cache_size: int = 128):
         self.project_root = os.path.abspath(project_root)
         self.max_workers = max_workers 
@@ -122,7 +122,7 @@ class MCPTools:
         else:
             return f"Unknown tool: {tool_name}"
 
-tools = [
+use_tools = [
     {
         "name": "list_files",
         "description": "List files in a directory within the current repo.",
