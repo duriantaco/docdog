@@ -146,6 +146,10 @@ docdog --prompt-template custom_template.txt
 
 Use a custom prompt template file (`custom_template.txt`) for README generation instead of the default template.
 
+### Supported Models
+
+At the moment, docdog only supports `claude-3-sonnet-20240229`. 
+
 ## Troubleshooting/FAQ
 
 ### Missing API Key

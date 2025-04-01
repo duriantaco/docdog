@@ -2,6 +2,10 @@
 
 All notable changes to DocDog will be documented in this file.
 
+## [0.0.4] - 2025-04-01
+### Fixed
+-Refactored main.py into 5 separate scripts namely, `p1_analysis_header.py`, `p2_readme_generator.py`, `p3_validate_readme.py`, `p4_save_readme.py` and `find_proj_root.py`
+
 ## [0.0.3] - 2025-03-26
 ### Fixed
 -Fixed bug in `main.py` with relation to `find_project_root` function. Looking in the wrong dir to generate the reports. 
